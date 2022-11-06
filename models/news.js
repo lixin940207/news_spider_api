@@ -85,10 +85,20 @@ async function getCovidNews(offset, limit) {
     }
 }
 
+async function getTechNews(offset, limit) {
+    return {
+        totalNum: await NewsModel.countDocuments({categories: "Tech"}),
+        news: await NewsModel
+            .find({categories: "Tech"})
+            .sort({publishTime: -1}).skip(Number(offset)).limit(Number(limit))
+    }
+}
+
 
 module.exports = {
     getChinaNews,
     getWorldNews,
     getFranceNews,
     getCovidNews,
+    getTechNews
 }

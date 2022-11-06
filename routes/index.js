@@ -53,4 +53,15 @@ router.get('/latest_covid_news', function(req, res, next) {
         .catch()
 });
 
+router.get('/latest_tech_news', function(req, res, next) {
+    (async ()=>{
+        return await NewsService.getLatestTechNews(req.query.offset, req.query.limit);
+    })()
+        .then(value => {
+            res.data = value;
+            res.json(res.data);
+        })
+        .catch()
+});
+
 module.exports = router;
