@@ -1,7 +1,5 @@
 FROM node:16.13.2-slim
-ENV NODE_ENV=production
-
-ARG Version=1.0.0
+ENV ENV=PRODUCTION
 
 LABEL name="news_spider_api"
 LABEL version=$Version
@@ -14,9 +12,11 @@ WORKDIR /news_spider_api
 
 RUN npm install --production
 
-COPY --chown=node:node . .
+COPY . .
 
-USER node
+RUN chown -Rh $user:$user /news_spider_api
+
+USER $user
 
 EXPOSE 5000
 
