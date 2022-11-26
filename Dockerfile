@@ -11,7 +11,7 @@ WORKDIR /news_spider_api
 
 RUN yarn cache clean \
     && yarn install --network-concurrency 1 --production \
-    && yarn cache clean \
+    && yarn cache clean
 
 COPY . .
 
