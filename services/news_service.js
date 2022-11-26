@@ -1,9 +1,5 @@
 const News = require('../models/news');
 
-async function getLatestNews() {
-      return await News.getLatestNews();
-}
-
 async function getLatestFranceNews(offset, limit, platforms = ['LeFigaro', 'LeMonde', 'LeParisien', 'France24', 'BFM']) {
       return await News.getFranceNews(offset, limit, platforms);
 }
@@ -25,7 +21,6 @@ async function getLatestTechNews(offset, limit) {
 }
 
 module.exports = {
-      getLatestNews,
       getLatestFranceNews,
       getLatestWorldNews,
       getLatestChinaNews,

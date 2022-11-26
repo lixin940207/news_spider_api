@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
-const fs = require('fs');
-const path = require("path");
 
-const data = fs.readFileSync(path.join(__dirname, '../config.json'), { encoding: 'utf-8' });
-const config = JSON.parse(data);
+const replicaSetHosts = process.env.MONGO_HOST || 'localhost:27017';
+const database = process.env.DATABASE || 'news_spider';
 
-const { replicaSetHosts, database, writeConcern, readPreference } = config.mongodb;
-const uri = `mongodb://${replicaSetHosts}/${database}?w=${writeConcern}&readPreference=${readPreference}`;
-mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true });
+let uri = `mongodb://${replicaSetHosts}/${database}`;
+if (process.env.ENV === 'PRODUCTION') {
+    uri = `mongodb+srv://${replicaSetHosts}/${database}?ssl=false&replicaSet=rs0`;
+}
+
+mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: false, connectWithNoPrimary: true });
 mongoose.set('useCreateIndex', true)
 const db = mongoose.connection;
 
