@@ -10,13 +10,13 @@ const NewsModel = mongoose.model('news', new BaseSchema(
     }));
 
 
-async function getNewsById(id) {
-    return await NewsModel.findById(id);
-}
-
-async function getNewsByHref(href) {
-    return await NewsModel.findOne({articleHref: href});
-}
+// async function getNewsById(id) {
+//     return await NewsModel.findById(id);
+// }
+//
+// async function getNewsByHref(href) {
+//     return await NewsModel.findOne({articleHref: href});
+// }
 
 // async function getLatestNews() {
 //     const latestUpdatedTime =  (await NewsModel.findOne({}).select('updatedAt').lean().sort({updatedAt: -1})).updatedAt;
