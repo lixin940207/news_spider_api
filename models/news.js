@@ -37,7 +37,7 @@ async function getFranceNews(offset, limit, platforms) {
     // const latestUpdatedTime =  (await NewsModel.findOne({}).select('updatedAt').lean().sort({updatedAt: -1})).updatedAt;
     const filter = {
         platform: platforms,
-        categories: {$nin: ['China']},
+        categories: {$nin: ['China', 'Tech']},
         displayOrder: {$exists: true}
     };
     return {
@@ -54,7 +54,7 @@ async function getWorldNews(plateforms, offset, limit) {
     // const latestUpdatedTime =  (await NewsModel.findOne({}).select('updatedAt').lean().sort({updatedAt: -1})).updatedAt;
     const filter = {
         platform: plateforms,
-        categories: {$nin: ['China']},
+        categories: {$nin: ['China', 'Tech']},
         displayOrder: {$exists: true}
     };
     return {
@@ -94,11 +94,21 @@ async function getTechNews(offset, limit) {
     }
 }
 
+async function getWarNews(offset, limit) {
+    return {
+        totalNum: await NewsModel.countDocuments({categories: "Russia-Ukrainian War"}),
+        news: await NewsModel
+            .find({categories: "Russia-Ukrainian War"})
+            .sort({publishTime: -1}).skip(Number(offset)).limit(Number(limit))
+    }
+}
+
 
 module.exports = {
     getChinaNews,
     getWorldNews,
     getFranceNews,
     getCovidNews,
-    getTechNews
+    getTechNews,
+    getWarNews,
 }

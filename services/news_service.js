@@ -20,12 +20,17 @@ async function getLatestTechNews(offset, limit) {
       return await News.getTechNews(offset, limit);
 }
 
+async function getLatestWarNews(offset, limit) {
+      return await News.getWarNews(offset, limit);
+}
+
 module.exports = {
       getLatestFranceNews,
       getLatestWorldNews,
       getLatestChinaNews,
       getLatestCovidNews,
-      getLatestTechNews
+      getLatestTechNews,
+      getLatestWarNews,
 }
 
 
