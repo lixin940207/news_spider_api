@@ -24,6 +24,10 @@ async function getLatestWarNews(offset, limit) {
       return await News.getWarNews(offset, limit);
 }
 
+async function getHotTopicsOfToday(count) {
+      return await News.getHotTopicsOfToday(count);
+}
+
 module.exports = {
       getLatestFranceNews,
       getLatestWorldNews,
@@ -31,6 +35,7 @@ module.exports = {
       getLatestCovidNews,
       getLatestTechNews,
       getLatestWarNews,
+      getHotTopicsOfToday,
 }
 
 

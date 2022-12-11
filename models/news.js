@@ -41,7 +41,7 @@ async function getFranceNews(offset, limit, platforms) {
         displayOrder: {$exists: true}
     };
     return {
-        totalNum:await NewsModel.countDocuments(filter),
+        totalNum: await NewsModel.countDocuments(filter),
         news: await NewsModel
             .find(filter)
             .sort({publishTime: -1})
@@ -58,7 +58,7 @@ async function getWorldNews(plateforms, offset, limit) {
         displayOrder: {$exists: true}
     };
     return {
-        totalNum:await NewsModel.countDocuments(filter),
+        totalNum: await NewsModel.countDocuments(filter),
         news: await NewsModel
             .find(filter)
             .sort({publishTime: -1})
@@ -103,6 +103,33 @@ async function getWarNews(offset, limit) {
     }
 }
 
+async function getHotTopicsOfToday(count = 10) {
+    const start = new Date();
+    start.setDate(start.getDate() - 1);
+
+    const topicDocs = await NewsModel
+        .find({
+                keywords: {$exists: true},
+                publishTime: {$gte: start.toISOString()}
+            },
+            {
+                keywords: 1
+            });
+    const topicCount = topicDocs
+        .map(doc => doc._doc.keywords)
+        .flat()
+        .filter( keyword => keyword !== '')
+        .reduce(function (map, word) {
+            map[word] = (map[word] || 0) + 1;
+            return map;
+        }, Object.create(null));
+
+    return Object.keys(topicCount)
+        .sort(function(a,b){
+            return topicCount[b]-topicCount[a];
+        }).slice(0,count);
+}
+
 
 module.exports = {
     getChinaNews,
@@ -111,4 +138,5 @@ module.exports = {
     getCovidNews,
     getTechNews,
     getWarNews,
+    getHotTopicsOfToday,
 }

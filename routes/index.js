@@ -73,4 +73,15 @@ router.get('/latest_war_news', function (req, res, next) {
         .catch()
 });
 
+router.get('/topics_of_today', function (req, res, next) {
+    (async () =>
+        await NewsService.getHotTopicsOfToday(req.query.count))()
+        .then(value => {
+            res.data = value;
+            res.json(res.data);
+            next();
+        })
+        .catch()
+});
+
 module.exports = router;
