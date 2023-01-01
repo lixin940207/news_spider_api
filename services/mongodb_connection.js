@@ -1,14 +1,10 @@
 const mongoose = require("mongoose");
 
-const replicaSetHosts = process.env.MONGO_HOST || 'localhost:27017';
-const database = process.env.DATABASE || 'news_spider';
+mongoose.Promise = Promise;
 
-let uri = `mongodb://${replicaSetHosts}/${database}`;
-if (process.env.ENV === 'PRODUCTION') {
-    uri = `mongodb+srv://${replicaSetHosts}/${database}?ssl=false&replicaSet=rs0`;
-}
+const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/news_spider';
 
-mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: false, connectWithNoPrimary: true });
+mongoose.connect(mongoUri, {useNewUrlParser: true, useUnifiedTopology: false, connectWithNoPrimary: true});
 mongoose.set('useCreateIndex', true)
 const db = mongoose.connection;
 
