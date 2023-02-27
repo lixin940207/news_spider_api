@@ -33,11 +33,10 @@ const NewsModel = mongoose.model('news', new BaseSchema(
 //         .sort({ranking: 1})
 // }
 
-async function getFranceNews(offset, limit, platforms) {
+async function getFranceNews(offset, limit) {
     // const latestUpdatedTime =  (await NewsModel.findOne({}).select('updatedAt').lean().sort({updatedAt: -1})).updatedAt;
     const filter = {
-        platform: platforms,
-        categories: {$nin: ['China', 'Tech']},
+        categories: "France",
         displayOrder: {$exists: true}
     };
     return {
@@ -50,11 +49,10 @@ async function getFranceNews(offset, limit, platforms) {
     }
 }
 
-async function getWorldNews(plateforms, offset, limit) {
+async function getWorldNews(offset, limit) {
     // const latestUpdatedTime =  (await NewsModel.findOne({}).select('updatedAt').lean().sort({updatedAt: -1})).updatedAt;
     const filter = {
-        platform: plateforms,
-        categories: {$nin: ['China', 'Tech']},
+        categories: "World",
         displayOrder: {$exists: true}
     };
     return {
@@ -94,6 +92,15 @@ async function getTechNews(offset, limit) {
     }
 }
 
+async function getFinanceNews(offset, limit) {
+    return {
+        totalNum: await NewsModel.countDocuments({categories: "Finance"}),
+        news: await NewsModel
+            .find({categories: "Finance"})
+            .sort({publishTime: -1}).skip(Number(offset)).limit(Number(limit))
+    }
+}
+
 async function getWarNews(offset, limit) {
     return {
         totalNum: await NewsModel.countDocuments({categories: "Russia-Ukrainian War"}),
@@ -119,6 +126,7 @@ async function getHotTopicsOfToday(count = 10) {
         .map(doc => doc._doc.keywords)
         .flat()
         .filter( keyword => keyword !== '')
+        .map(word => word.toLowerCase())
         .reduce(function (map, word) {
             map[word] = (map[word] || 0) + 1;
             return map;
@@ -127,9 +135,29 @@ async function getHotTopicsOfToday(count = 10) {
     return Object.keys(topicCount)
         .sort(function(a,b){
             return topicCount[b]-topicCount[a];
-        }).slice(0,count);
+        }).slice(0,count)
+        .map(word => word.split(' ')
+            .map(i => i.charAt(0).toUpperCase() + i.slice(1)).join(' '));
 }
 
+
+async function getNewsByTopic(topic, offset, limit) {
+    return {
+        totalNum: await NewsModel.countDocuments({keywords: topic}),
+        news: await NewsModel
+            .find({keywords: new RegExp(topic, 'i')})
+            .sort({publishTime: -1}).skip(Number(offset)).limit(Number(limit))
+    }
+}
+
+async function getSearchNews(lang, input, offset, limit) {
+    return {
+        totalNum: await NewsModel.countDocuments({[`title.${lang}`]: {$regex: `${input}`, $options:'i'}}),
+        news: await NewsModel
+            .find({[`title.${lang}`]: {$regex: `${input}`, $options:'i'}})
+            .sort({publishTime: -1}).skip(Number(offset)).limit(Number(limit))
+    }
+}
 
 module.exports = {
     getChinaNews,
@@ -137,6 +165,9 @@ module.exports = {
     getFranceNews,
     getCovidNews,
     getTechNews,
+    getFinanceNews,
     getWarNews,
     getHotTopicsOfToday,
+    getNewsByTopic,
+    getSearchNews,
 }
